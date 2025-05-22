@@ -84,7 +84,7 @@ async def shell_cmd(cmd):
 
 
 async def get_youtube_stream(query: str, video: bool = False):
-    api_url = "http://154.26.159.2:1470/youtube"
+    api_url = "http://154.26.159.2/youtube"
     api_key = "1a873582a7c83342f961cx0a177b2b26"
     params = {"query": query, "video": video, "api_key": api_key}
 
