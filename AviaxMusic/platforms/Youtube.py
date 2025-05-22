@@ -2,7 +2,6 @@ import asyncio
 import os
 import re
 import json
-import httpx
 from typing import Union
 
 import yt_dlp
@@ -81,11 +80,6 @@ async def shell_cmd(cmd):
         else:
             return errorz.decode("utf-8")
     return out.decode("utf-8")
-
-
-async def get_audio_stream(link: str):
-    return f"http://154.26.155.55:8000/download?query={link}"
-    
 
 
 class YouTubeAPI:
@@ -386,11 +380,6 @@ class YouTubeAPI:
             fpath = f"downloads/{title}.mp3"
             return fpath
         elif video:
-            downloaded_file = None
-            direct = None
-            if downloaded_file:
-                return downloaded_file, direct
-                
             if await is_on_off(1):
                 direct = True
                 downloaded_file = await loop.run_in_executor(None, video_dl)
@@ -421,12 +410,6 @@ class YouTubeAPI:
                    direct = True
                    downloaded_file = await loop.run_in_executor(None, video_dl)
         else:
-            downloaded_file = await get_audio_stream(link)
-            direct = None
-            if downloaded_file:
-                return downloaded_file, direct
-                
             direct = True
             downloaded_file = await loop.run_in_executor(None, audio_dl)
         return downloaded_file, direct
-        
