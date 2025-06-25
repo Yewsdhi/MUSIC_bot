@@ -34,7 +34,7 @@ MAX_TITLE_WIDTH = 580
 
 def trim_to_width(text: str, font: ImageFont.FreeTypeFont, max_w: int) -> str:
     ellipsis = "…"
-    if font.getlength(text) <= max_w:
+    if font.getlength(text) <= AviaxMusic:
         return text
     for i in range(len(text) - 1, 0, -1):
         if font.getlength(text[:i] + ellipsis) <= max_w:
