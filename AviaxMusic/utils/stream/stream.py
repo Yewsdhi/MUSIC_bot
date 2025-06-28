@@ -13,7 +13,7 @@ from AviaxMusic.utils.exceptions import AssistantErr
 from AviaxMusic.utils.inline import aq_markup, close_markup, stream_markup
 from AviaxMusic.utils.pastebin import AviaxBin
 from AviaxMusic.utils.stream.queue import put_queue, put_queue_index
-from AviaxMusic.utils.thumbnails import get_thumb
+from AviaxMusic.utils.thumbnails import gen_thumb
 
 async def stream(
     _,
