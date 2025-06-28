@@ -9,7 +9,7 @@ from AviaxMusic.utils.database import get_loop
 from AviaxMusic.utils.decorators import AdminRightsCheck
 from AviaxMusic.utils.inline import close_markup, stream_markup
 from AviaxMusic.utils.stream.autoclear import auto_clean
-from AviaxMusic.utils.thumbnails import gen_thumb
+from AviaxMusic.utils.thumbnails import get_thumb
 from config import BANNED_USERS
 
 
