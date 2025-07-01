@@ -13,10 +13,10 @@ from youtubesearchpython.__future__ import VideosSearch
 from config import YOUTUBE_IMG_URL
 
 FONTS = {
-    "cfont": ImageFont.truetype("AviaxMusic/modules/utils/cfont.ttf", 15),
-    "dfont": ImageFont.truetype("AviaxMusic/modules/utils/font2.otf", 12),
-    "nfont": ImageFont.truetype("AviaxMusic/modules/utils/font.ttf", 10),
-    "tfont": ImageFont.truetype("AviaxMusic/modules/utils/font.ttf", 20),
+    "cfont": ImageFont.truetype("TgMusic/modules/utils/cfont.ttf", 15),
+    "dfont": ImageFont.truetype("TgMusic/modules/utils/font2.otf", 12),
+    "nfont": ImageFont.truetype("TgMusic/modules/utils/font.ttf", 10),
+    "tfont": ImageFont.truetype("TgMusic/modules/utils/font.ttf", 20),
 }
 
 
