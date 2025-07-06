@@ -9,7 +9,7 @@ import httpx
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
 from aiofiles.os import path as aiopath
 
-from .AviaxMusic import CachedTrack
+from .AviaxMusic.import CachedTrack
 from AviaxMusic.logger import LOGGER
 
 FONTS = {
