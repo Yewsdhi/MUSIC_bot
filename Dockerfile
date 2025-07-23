@@ -1,22 +1,16 @@
-# Install system dependencies and Node.js
-RUN apt-get update && \
-    apt-get install -y curl ffmpeg aria2 && \
-    curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+FROM nikolaik/python-nodejs:python3.10-nodejs19
 
-# Set working directory
-WORKDIR /app
+RUN sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list && \
+    sed -i '/security.debian.org/d' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends ffmpeg aria2 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy project files
-COPY . .
+COPY . /app/
+WORKDIR /app/
 
-# Install Python dependencies
-RUN python -m pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir --upgrade pip
+RUN pip3 install --no-cache-dir --upgrade --requirement requirements.txt
 
-# Optional: Make script executable (only if needed)
-# RUN chmod +x start.py
-
-# Start the bot
-CMD ["python3", "start.py"]
+CMD bash start
