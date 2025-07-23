@@ -1,14 +1,22 @@
-FROM nikolaik/python-nodejs:python3.10-nodejs19
-
-# Install ffmpeg and git
+# Install system dependencies and Node.js
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y curl ffmpeg aria2 && \
+    curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Set working directory
 WORKDIR /app
-COPY . /app
 
-RUN pip3 install --no-cache-dir -U -r requirements.txt
+# Copy project files
+COPY . .
 
-CMD ["bash", "start"]
+# Install Python dependencies
+RUN python -m pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Optional: Make script executable (only if needed)
+# RUN chmod +x start.py
+
+# Start the bot
+CMD ["python3", "start.py"]
