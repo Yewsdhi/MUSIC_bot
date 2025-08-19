@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import random from "react";
 import { Play, Pause, SkipBack, SkipForward, Volume2, Star } from "lucide-react";
 
 export default function MusicPlayer() {
