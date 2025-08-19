@@ -1,158 +1,250 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Music Thumbnail Card</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#eef0f4;
-    --card:#ffffff;
-    --text:#222;
-    --muted:#9aa3b2;
-    --accent:#7c4dff;       /* left */
-    --accent-2:#c084fc;     /* right */
-    --radius:22px;
-    --shadow: 0 18px 40px rgba(0,0,0,.15), 0 2px 6px rgba(0,0,0,.08);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    min-height:100dvh;
-    display:grid;
-    place-items:center;
-    background:
-      radial-gradient(60% 60% at 50% 0%, rgba(0,0,0,.06), transparent 60%) ,
-      var(--bg);
-    font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  }
+# ATLEAST GIVE CREDITS IF YOU STEALING :(((((((((((((((((((((((((((((((((((((
+# ELSE NO FURTHER PUBLIC THUMBNAIL UPDATES
 
-  .card{
-    width:min(92vw, 360px);
-    background:var(--card);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    overflow:hidden;
-    position:relative;
-  }
+import random
+import logging
+import os
+import re
+import aiofiles
+import aiohttp
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
+from youtubesearchpython.__future__ import VideosSearch
 
-  .cover{
-    height:180px;
-    background:url("https://images.unsplash.com/photo-1503342394128-c104d54dba01?q=80&w=1200&auto=format&fit=crop") center/cover no-repeat;
-    border-top-left-radius:var(--radius);
-    border-top-right-radius:var(--radius);
-  }
+logging.basicConfig(level=logging.INFO)
 
-  .body{
-    padding:18px 20px 22px;
-  }
+def changeImageSize(maxWidth, maxHeight, image):
+    widthRatio = maxWidth / image.size[0]
+    heightRatio = maxHeight / image.size[1]
+    newWidth = int(widthRatio * image.size[0])
+    newHeight = int(heightRatio * image.size[1])
+    newImage = image.resize((newWidth, newHeight))
+    return newImage
 
-  .title{
-    text-align:center;
-    font-family:"Great Vibes", cursive;
-    font-size:34px;
-    line-height:1;
-    color:#000;
-    text-shadow:0 3px 10px rgba(0,0,0,.15);
-    margin:8px 0 18px;
-  }
+def truncate(text):
+    list = text.split(" ")
+    text1 = ""
+    text2 = ""    
+    for i in list:
+        if len(text1) + len(i) < 30:        
+            text1 += " " + i
+        elif len(text2) + len(i) < 30:       
+            text2 += " " + i
 
-  /* progress */
-  .bar-wrap{
-    height:10px;
-    border-radius:999px;
-    background:linear-gradient(90deg, rgba(0,0,0,.06) 0 100%);
-    position:relative;
-    overflow:hidden;
-    margin:0 auto 22px;
-    width:82%;
-  }
-  .bar{
-    position:absolute; inset:0;
-    --p: 38%; /* progress % */
-    background:
-      linear-gradient(90deg, var(--accent), var(--accent-2)) 0/var(--p) 100% no-repeat,
-      linear-gradient(#e6e9ef,#e6e9ef);
-  }
+    text1 = text1.strip()
+    text2 = text2.strip()     
+    return [text1,text2]
 
-  /* controls */
-  .controls{
-    display:flex; align-items:center; justify-content:center; gap:28px;
-    margin:8px 0 4px;
-  }
-  .btn{
-    width:44px; height:44px; display:grid; place-items:center;
-    border:none; background:transparent; cursor:pointer;
-    transition:transform .14s ease;
-  }
-  .btn:active{ transform:scale(.96) }
+def random_color():
+    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
-  .play{
-    width:60px; height:60px; border-radius:50%;
-    background:#111; color:#fff;
-    box-shadow:0 10px 18px rgba(0,0,0,.25);
-  }
-  .meta{
-    text-align:center;
-    font-size:13px; color:var(--muted);
-    margin-top:8px;
-  }
+def generate_gradient(width, height, start_color, end_color):
+    base = Image.new('RGBA', (width, height), start_color)
+    top = Image.new('RGBA', (width, height), end_color)
+    mask = Image.new('L', (width, height))
+    mask_data = []
+    for y in range(height):
+        mask_data.extend([int(60 * (y / height))] * width)
+    mask.putdata(mask_data)
+    base.paste(top, (0, 0), mask)
+    return base
 
-  /* subtle top highlight like the mockup */
-  .glow{
-    position:absolute; inset:0;
-    pointer-events:none;
-    background:
-      radial-gradient(120px 38px at 50% 180px, rgba(0,0,0,.18), transparent 70%);
-    border-radius:var(--radius);
-  }
+def add_border(image, border_width, border_color):
+    width, height = image.size
+    new_width = width + 2 * border_width
+    new_height = height + 2 * border_width
+    new_image = Image.new("RGBA", (new_width, new_height), border_color)
+    new_image.paste(image, (border_width, border_width))
+    return new_image
 
-  /* utility: hide focus ring outline but keep accessibility */
-  .btn:focus-visible{ outline:2px solid #000; outline-offset:3px }
-  .play:focus-visible{ outline-color:#7c4dff }
-</style>
-</head>
-<body>
+def crop_center_circle(img, output_size, border, border_color, crop_scale=1.5):
+    half_the_width = img.size[0] / 2
+    half_the_height = img.size[1] / 2
+    larger_size = int(output_size * crop_scale)
+    img = img.crop(
+        (
+            half_the_width - larger_size/2,
+            half_the_height - larger_size/2,
+            half_the_width + larger_size/2,
+            half_the_height + larger_size/2
+        )
+    )
+    
+    img = img.resize((output_size - 2*border, output_size - 2*border))
+    
+    
+    final_img = Image.new("RGBA", (output_size, output_size), border_color)
+    
+    
+    mask_main = Image.new("L", (output_size - 2*border, output_size - 2*border), 0)
+    draw_main = ImageDraw.Draw(mask_main)
+    draw_main.ellipse((0, 0, output_size - 2*border, output_size - 2*border), fill=255)
+    
+    final_img.paste(img, (border, border), mask_main)
+    
+    
+    mask_border = Image.new("L", (output_size, output_size), 0)
+    draw_border = ImageDraw.Draw(mask_border)
+    draw_border.ellipse((0, 0, output_size, output_size), fill=255)
+    
+    result = Image.composite(final_img, Image.new("RGBA", final_img.size, (0, 0, 0, 0)), mask_border)
+    
+    return result
 
-  <div class="card">
-    <div class="cover" role="img" aria-label="Album cover"></div>
+def draw_text_with_shadow(background, draw, position, text, font, fill, shadow_offset=(3, 3), shadow_blur=5):
+    
+    shadow = Image.new('RGBA', background.size, (0, 0, 0, 0))
+    shadow_draw = ImageDraw.Draw(shadow)
+    
+    
+    shadow_draw.text(position, text, font=font, fill="black")
+    
+    
+    shadow = shadow.filter(ImageFilter.GaussianBlur(radius=shadow_blur))
+    
+    
+    background.paste(shadow, shadow_offset, shadow)
+    
+    
+    draw.text(position, text, font=font, fill=fill)
 
-    <div class="body">
-      <div class="title">Dream Music</div>
+async def gen_thumb(videoid: str):
+    try:
+        if os.path.isfile(f"cache/{videoid}_v4.png"):
+            return f"cache/{videoid}_v4.png"
 
-      <div class="bar-wrap" aria-label="progress">
-        <div class="bar"></div>
-      </div>
+        url = f"https://www.youtube.com/watch?v={videoid}"
+        results = VideosSearch(url, limit=1)
+        for result in (await results.next())["result"]:
+            title = result.get("title")
+            if title:
+                title = re.sub("\W+", " ", title).title()
+            else:
+                title = "Unsupported Title"
+            duration = result.get("duration")
+            if not duration:
+                duration = "Live"
+            thumbnail_data = result.get("thumbnails")
+            if thumbnail_data:
+                thumbnail = thumbnail_data[0]["url"].split("?")[0]
+            else:
+                thumbnail = None
+            views_data = result.get("viewCount")
+            if views_data:
+                views = views_data.get("short")
+                if not views:
+                    views = "Unknown Views"
+            else:
+                views = "Unknown Views"
+            channel_data = result.get("channel")
+            if channel_data:
+                channel = channel_data.get("name")
+                if not channel:
+                    channel = "Unknown Channel"
+            else:
+                channel = "Unknown Channel"
 
-      <div class="controls" aria-label="player controls">
-        <!-- back -->
-        <button class="btn" aria-label="Previous">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M6 6h2v12H6zM20 18l-10-6 10-6v12z"/>
-          </svg>
-        </button>
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(thumbnail) as resp:
+        
+                content = await resp.read()
+                if resp.status == 200:
+                    content_type = resp.headers.get('Content-Type')
+                    if 'jpeg' in content_type or 'jpg' in content_type:
+                        extension = 'jpg'
+                    elif 'png' in content_type:
+                        extension = 'png'
+                    else:
+                        logging.error(f"Unexpected content type: {content_type}")
+                        return None
 
-        <!-- play -->
-        <button class="btn play" aria-label="Play">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        </button>
+                    filepath = f"cache/thumb{videoid}.png"
+                    f = await aiofiles.open(filepath, mode="wb")
+                    await f.write(await resp.read())
+                    await f.close()
+                    # os.system(f"file {filepath}")
+                    
+        
+        image_path = f"cache/thumb{videoid}.png"
+        youtube = Image.open(image_path)
+        image1 = changeImageSize(1280, 720, youtube)
+        
+        image2 = image1.convert("RGBA")
+        background = image2.filter(filter=ImageFilter.BoxBlur(20))
+        enhancer = ImageEnhance.Brightness(background)
+        background = enhancer.enhance(0.6)
 
-        <!-- next -->
-        <button class="btn" aria-label="Next">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M16 6h2v12h-2zM4 18l10-6L4 6v12z"/>
-          </svg>
-        </button>
-      </div>
+        
+        start_gradient_color = random_color()
+        end_gradient_color = random_color()
+        gradient_image = generate_gradient(1280, 720, start_gradient_color, end_gradient_color)
+        background = Image.blend(background, gradient_image, alpha=0.2)
+        
+        draw = ImageDraw.Draw(background)
+        arial = ImageFont.truetype("AviaxMusic/assets/font2.ttf", 30)
+        font = ImageFont.truetype("AviaxMusic/assets/font.ttf", 30)
+        title_font = ImageFont.truetype("AviaxMusic/assets/font3.ttf", 45)
 
-      <div class="meta">@Dream_with_Music_Bot</div>
-    </div>
 
-    <div class="glow"></div>
-  </div>
+        circle_thumbnail = crop_center_circle(youtube, 400, 20, start_gradient_color)
+        circle_thumbnail = circle_thumbnail.resize((400, 400))
+        circle_position = (120, 160)
+        background.paste(circle_thumbnail, circle_position, circle_thumbnail)
 
-</body>
-</html>
+        text_x_position = 565
+        title1 = truncate(title)
+        draw_text_with_shadow(background, draw, (text_x_position, 180), title1[0], title_font, (255, 255, 255))
+        draw_text_with_shadow(background, draw, (text_x_position, 230), title1[1], title_font, (255, 255, 255))
+        draw_text_with_shadow(background, draw, (text_x_position, 320), f"{channel}  |  {views[:23]}", arial, (255, 255, 255))
+
+
+        line_length = 580  
+        line_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+        if duration != "Live":
+            color_line_percentage = random.uniform(0.15, 0.85)
+            color_line_length = int(line_length * color_line_percentage)
+            white_line_length = line_length - color_line_length
+
+            start_point_color = (text_x_position, 380)
+            end_point_color = (text_x_position + color_line_length, 380)
+            draw.line([start_point_color, end_point_color], fill=line_color, width=9)
+        
+            start_point_white = (text_x_position + color_line_length, 380)
+            end_point_white = (text_x_position + line_length, 380)
+            draw.line([start_point_white, end_point_white], fill="white", width=8)
+        
+            circle_radius = 10 
+            circle_position = (end_point_color[0], end_point_color[1])
+            draw.ellipse([circle_position[0] - circle_radius, circle_position[1] - circle_radius,
+                      circle_position[0] + circle_radius, circle_position[1] + circle_radius], fill=line_color)
+    
+        else:
+            line_color = (255, 0, 0)
+            start_point_color = (text_x_position, 380)
+            end_point_color = (text_x_position + line_length, 380)
+            draw.line([start_point_color, end_point_color], fill=line_color, width=9)
+        
+            circle_radius = 10 
+            circle_position = (end_point_color[0], end_point_color[1])
+            draw.ellipse([circle_position[0] - circle_radius, circle_position[1] - circle_radius,
+                          circle_position[0] + circle_radius, circle_position[1] + circle_radius], fill=line_color)
+
+        draw_text_with_shadow(background, draw, (text_x_position, 400), "00:00", arial, (255, 255, 255))
+        draw_text_with_shadow(background, draw, (1080, 400), duration, arial, (255, 255, 255))
+        
+        play_icons = Image.open("AviaxMusic/assets/play_icons.png")
+        play_icons = play_icons.resize((580, 62))
+        background.paste(play_icons, (text_x_position, 450), play_icons)
+
+        os.remove(f"cache/thumb{videoid}.png")
+
+        background_path = f"cache/{videoid}_v4.png"
+        background.save(background_path)
+        
+        return background_path
+
+    except Exception as e:
+        logging.error(f"Error generating thumbnail for video {videoid}: {e}")
+        traceback.print_exc()
+        return None
