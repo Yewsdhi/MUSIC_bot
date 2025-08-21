@@ -1,28 +1,3 @@
-# Copyright (c) 2025 Nand Yaduwanshi <NoxxOP>
-# Location: Supaul, Bihar
-#
-# All rights reserved.
-#
-# This code is the intellectual property of Nand Yaduwanshi.
-# You are not allowed to copy, modify, redistribute, or use this
-# code for commercial or personal projects without explicit permission.
-#
-# Allowed:
-# - Forking for personal learning
-# - Submitting improvements via pull requests
-#
-# Not Allowed:
-# - Claiming this code as your own
-# - Re-uploading without credit or permission
-# - Selling or using commercially
-#
-# Contact for permissions:
-# Email: badboy809075@gmail.com
-
-
-# ATLEAST GIVE CREDITS IF YOU STEALING :(((((((((((((((((((((((((((((((((((((
-# ELSE NO FURTHER PUBLIC THUMBNAIL UPDATES
-
 import random
 import logging
 import os
@@ -129,7 +104,7 @@ def draw_text_with_shadow(background, draw, position, text, font, fill, shadow_o
     
     draw.text(position, text, font=font, fill=fill)
 
-async def get_thumb(videoid: str):
+async def gen_thumb(videoid: str):
     try:
         if os.path.isfile(f"cache/{videoid}_v4.png"):
             return f"cache/{videoid}_v4.png"
