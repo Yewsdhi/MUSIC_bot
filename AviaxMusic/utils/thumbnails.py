@@ -1,3 +1,6 @@
+# ATLEAST GIVE CREDITS IF YOU STEALING :(((((((((((((((((((((((((((((((((((((
+# ELSE NO FURTHER PUBLIC THUMBNAIL UPDATES
+
 import random
 import logging
 import os
@@ -180,7 +183,7 @@ async def gen_thumb(videoid: str):
         draw = ImageDraw.Draw(background)
         arial = ImageFont.truetype("AviaxMusic/assets/font2.ttf", 30)
         font = ImageFont.truetype("AviaxMusic/assets/font.ttf", 30)
-        title_font = ImageFont.truetype("ShrutiMusic/assets/font3.ttf", 45)
+        title_font = ImageFont.truetype("AviaxMusic/assets/font3.ttf", 45)
 
 
         circle_thumbnail = crop_center_circle(youtube, 400, 20, start_gradient_color)
@@ -245,15 +248,3 @@ async def gen_thumb(videoid: str):
         logging.error(f"Error generating thumbnail for video {videoid}: {e}")
         traceback.print_exc()
         return None
-
-
-# Â©ï¸ Copyright Reserved - @NoxxOP  Nand Yaduwanshi
-
-# ===========================================
-# Â©ï¸ 2025 Nand Yaduwanshi (aka @NoxxOP)
-# ðŸ”— GitHub : https://github.com/NoxxOP/ShrutiMusic
-# ðŸ“¢ Telegram Channel : https://t.me/ShrutiBots
-# ===========================================
-
-
-# â¤ï¸ Love From ShrutiBots 
