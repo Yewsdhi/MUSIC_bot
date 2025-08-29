@@ -34,7 +34,7 @@ import asyncio
 from config import *
 import numpy as np
 from yt_dlp import YoutubeDL
-from pytube import YouTube
+from youtubesearchpython.__future__ import VideosSearch
 from config import user, dev, call, logger, logger_mode, botname, appp
 from bot import OWNER_ID
 from CASERr.daty import get_call, get_userbot, get_dev, get_logger, del_userbot, del_call, get_devss
@@ -549,3 +549,4 @@ async def ytsearch(_, message: Message):
         await m.edit(text, disable_web_page_preview=True)
     except Exception as e:
         await m.edit(str(e))
+
