@@ -441,4 +441,111 @@ async def gh24user(client, message):
     bot_username = client.me.username 
     hoss = await get_call(bot_username)
     try:    	
-        await hoss.l
+        await hoss.leave_group_call(message.chat.id)
+        await message.reply_text("حاضر سكت اهو🚦")
+    except Exception as e:
+        await message.reply_text("لا يوجد شئ قيد التشغيل الان 🎧")
+ 
+@Client.on_message(filters.command(["تخطي", "/skip"], "") & filters.group, group=5864548)
+async def skip2(client, message):
+    group_id = message.chat.id
+    bot_username = client.me.username 
+    get = await client.get_chat_member(message.chat.id, message.from_user.id)
+    if get.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
+        chat_id = message.chat.id
+        ho = await message.reply_text("**جاري تخطي التشغيل**") 
+        await change_stream(bot_username, chat_id, client, message)
+        await ho.delete()
+    else:
+        return await message.reply_text(f"يجب انت تكون ادمن للقيام بذلك 🚦")
+
+@Client.on_message(filters.command(["تخطي", "/skip"], "") & filters.channel, group=5869864548)
+async def ski25p2(client, message):
+    chat_id = message.chat.id
+    bot_username = client.me.username 
+    ho = await message.reply_text("**جاري تخطي التشغيل**") 
+    await ho.delete()
+    await change_stream(bot_username, chat_id, client, message)
+    
+@Client.on_message(filters.command(["توقف", "وقف"], "") & filters.group, group=58655654548)
+async def sp2(client, message):
+    bot_username = client.me.username 
+    hoss = await get_call(bot_username)
+    group_id = message.chat.id
+    get = await client.get_chat_member(message.chat.id, message.from_user.id)
+    if get.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
+     chat_id = message.chat.id
+     ho = await message.reply_text("**جاري توقف التشغيل**") 
+     try:    	
+      await hoss.pause_stream(chat_id)
+      await ho.edit_text("حاضر سكت اهو🚦")
+     except Exception as e:
+      await ho.edit_text("لا يوجد شئ قيد التشغيل الان 🎧")
+    else:
+     return await message.reply_text(f"يجب انت تكون ادمن للقيام بذلك 🎧")
+
+@Client.on_message(filters.command(["توقف", "وقف"], "") & filters.channel, group=5866555654548)
+async def s356p2(client, message):
+    bot_username = client.me.username 
+    hoss = await get_call(bot_username)
+    chat_id = message.chat.id
+    ho = await message.reply_text("**جاري توقف التشغيل**") 
+    try:    	
+     await hoss.pause_stream(chat_id)
+     await ho.edit_text("حاضر سكت اهو🚦")
+    except Exception as e:
+     await ho.edit_text("لا يوجد شئ قيد التشغيل الان 🎧")
+     
+@Client.on_message(filters.command(["كمل"], "") & filters.group, group=5866564548)
+async def s12p2(client, message):
+    bot_username = client.me.username 
+    hoss = await get_call(bot_username)
+    group_id = message.chat.id
+    get = await client.get_chat_member(message.chat.id, message.from_user.id)
+    if get.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
+     chat_id = message.chat.id
+     ho = await message.reply_text("**جاري استكمال التشغيل**") 
+     try:    	
+      await hoss.resume_stream(chat_id)
+      await ho.edit_text("تم استكمال التشغيل ☕🍁")
+     except Exception as e:
+      await ho.edit_text("لا يوجد شئ قيد التشغيل الان 🎧")
+    else:
+     return await message.reply_text(f"يجب انت تكون ادمن للقيام بذلك 🎧")
+
+@Client.on_message(filters.command(["كمل"], "") & filters.channel, group=645866564548)
+async def s12p582(client, message):
+    chat_id = message.chat.id
+    bot_username = client.me.username 
+    hoss = await get_call(bot_username)
+    ho = await message.reply_text("**جاري استكمال التشغيل**") 
+    try:    	
+     await hoss.resume_stream(chat_id)
+     await ho.edit_text("تم استكمال التشغيل ☕🍁")
+    except Exception as e:
+     await ho.edit_text("لا يوجد شئ قيد التشغيل الان 🎧")
+
+
+#..................................................بحث يوتيوب.................................................................
+
+@Client.on_message(filters.command("بحث",prefixes=""),group=592231800844)
+async def ytsearch(_, message: Message):
+    try:
+        if len(message.command) < 2:
+            await message.reply_text("/search needs an argument!")
+            return
+        query = message.text.split(None, 1)[1]
+        m = await message.reply_text(" searching")
+        results = YoutubeSearch(query, max_results=5).to_dict()
+        i = 0
+        text = ""
+        while i < 5:
+            text += f"Song: {results[i]['title']}\n"
+            text += f"Duration: {results[i]['duration']}\n"
+            text += f"Views: {results[i]['views']}\n"
+            text += f"Channel: {results[i]['channel']}\n"
+            text += f"https://www.youtube.com{results[i]['url_suffix']}\n\n"
+            i += 1
+        await m.edit(text, disable_web_page_preview=True)
+    except Exception as e:
+        await m.edit(str(e))
