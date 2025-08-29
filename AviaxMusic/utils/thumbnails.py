@@ -441,4 +441,4 @@ async def gen_thumb(videoid: str):
     bot_username = client.me.username 
     hoss = await get_call(bot_username)
     try:    	
-        await hoss.l
+        await hoss
