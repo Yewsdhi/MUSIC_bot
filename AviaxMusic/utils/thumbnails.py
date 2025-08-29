@@ -436,9 +436,7 @@ async def ghuser(client, message):
     else:
       return await message.reply_text(f"يجب انت تكون ادمن للقيام بذلك 🎧")
 
-@Client.on_message(filters.command(["اسكت", "ايقاف"], "") & filters.channel, group=5564656568548)
-async def gen_thumb(videoid: str):
-    bot_username = client.me.username 
-    hoss = await get_call(bot_username)
-    try:    	
-        await hoss
+except Exception as e:
+        logging.error(f"Error generating thumbnail for video {videoid}: {e}")
+        traceback.print_exc()
+        return None
