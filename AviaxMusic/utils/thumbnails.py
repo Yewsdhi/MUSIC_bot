@@ -8,6 +8,8 @@ from youtubesearchpython.future import VideosSearch
 import logging
 import traceback
 
+logging.basicConfig(level=logging.INFO)
+
 # Constants
 CACHE_DIR = "cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
