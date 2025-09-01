@@ -4,11 +4,8 @@ import random
 import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
-from youtubesearchpython.future import VideosSearch
-import logging
-import traceback
-
-logging.basicConfig(level=logging.INFO)
+from youtubesearchpython.__future__ import VideosSearch
+from config import FAILED
 
 # Constants
 CACHE_DIR = "cache"
