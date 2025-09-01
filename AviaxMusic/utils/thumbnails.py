@@ -5,7 +5,6 @@ import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 from youtubesearchpython.__future__ import VideosSearch
-from config import config.py
 
 # Constants
 CACHE_DIR = "cache"
