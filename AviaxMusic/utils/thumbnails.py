@@ -5,6 +5,7 @@ import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 from youtubesearchpython.__future__ import VideosSearch
+from config import FAILED
 
 # Constants
 CACHE_DIR = "cache"
@@ -61,21 +62,21 @@ CONTROLS_X = BAR_X - 15
 CONTROLS_Y = BAR_Y + BAR_HEIGHT + 55
 
 # New image settings
-NEW_IMG_PATH = "AviaxMusic/assets/ee.png"
+NEW_IMG_PATH = "VeGa/assets/ee.png"
 NEW_IMG_WIDTH = 320
 NEW_IMG_HEIGHT = 80
 NEW_IMG_X = CONTROLS_X + (CONTROLS_WIDTH - NEW_IMG_WIDTH) // 2
 NEW_IMG_Y = CONTROLS_Y + CONTROLS_HEIGHT + 15
 
-EXTRA_IMG_PATH = "AviaxMusic/assets/ggg.png"
+EXTRA_IMG_PATH = "VeGa/assets/ggg.png"
 EXTRA_IMG_WIDTH = 100
 EXTRA_IMG_HEIGHT = 115
 EXTRA_IMG_X = PANEL_X + PANEL_W - EXTRA_IMG_WIDTH - 40
 EXTRA_IMG_Y = PANEL_Y + 40
 
 # Font paths
-TITLE_FONT_PATH = "AviaxMusic/assets/font2.ttf.ttf"
-REGULAR_FONT_PATH = "AviaxMusic/assets/font.ttf"
+TITLE_FONT_PATH = "VeGa/assets/thumb/font2.ttf"
+REGULAR_FONT_PATH = "VeGa/assets/thumb/font.ttf"
 
 # Border colors
 BORDER_COLORS = [
@@ -88,7 +89,7 @@ BORDER_COLORS = [
     "#FF00FF", "#00FFFF", "#40E0D0", "#4B0082", "#FFD700", "#C0C0C0", "#B8860B",
 ]
 
-async def gen_thumb(videoid: str) -> str:
+async def get_thumb(videoid: str) -> str:
     cache_path = os.path.join(CACHE_DIR, f"{videoid}_custom.png")
     if os.path.exists(cache_path):
         return cache_path
@@ -214,7 +215,7 @@ async def gen_thumb(videoid: str) -> str:
 
     # Add controls (play/pause buttons)
     try:
-        controls_img = Image.open("AviaxMusic/assets/play_icons.png").resize(
+        controls_img = Image.open("VeGa/assets/icons.png").resize(
             (CONTROLS_WIDTH, CONTROLS_HEIGHT)).convert("RGBA")
         darkened_bg.paste(controls_img, (CONTROLS_X, CONTROLS_Y), controls_img)
     except:
