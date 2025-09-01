@@ -75,8 +75,8 @@ EXTRA_IMG_X = PANEL_X + PANEL_W - EXTRA_IMG_WIDTH - 40
 EXTRA_IMG_Y = PANEL_Y + 40
 
 # Font paths
-TITLE_FONT_PATH = "VeGa/assets/thumb/font2.ttf"
-REGULAR_FONT_PATH = "VeGa/assets/thumb/font.ttf"
+TITLE_FONT_PATH = "AviaxMusic/assets/font2.ttf.ttf"
+REGULAR_FONT_PATH = "AviaxMusic/assets/font.ttf"
 
 # Border colors
 BORDER_COLORS = [
