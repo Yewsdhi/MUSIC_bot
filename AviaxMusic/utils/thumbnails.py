@@ -215,7 +215,7 @@ async def get_thumb(videoid: str) -> str:
 
     # Add controls (play/pause buttons)
     try:
-        controls_img = Image.open("VeGa/assets/icons.png").resize(
+        controls_img = Image.open("AviaxMusic/assets/play_icons.png").resize(
             (CONTROLS_WIDTH, CONTROLS_HEIGHT)).convert("RGBA")
         darkened_bg.paste(controls_img, (CONTROLS_X, CONTROLS_Y), controls_img)
     except:
