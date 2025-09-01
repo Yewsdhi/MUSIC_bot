@@ -88,7 +88,7 @@ BORDER_COLORS = [
     "#FF00FF", "#00FFFF", "#40E0D0", "#4B0082", "#FFD700", "#C0C0C0", "#B8860B",
 ]
 
-async def get_thumb(videoid: str) -> str:
+async def gen_thumb(videoid: str) -> str:
     cache_path = os.path.join(CACHE_DIR, f"{videoid}_custom.png")
     if os.path.exists(cache_path):
         return cache_path
