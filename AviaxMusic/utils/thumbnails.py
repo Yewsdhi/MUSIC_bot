@@ -59,17 +59,28 @@ draw.rounded_rectangle([(BAR_X, BAR_Y), (BAR_X + BAR_WIDTH//3, BAR_Y + BAR_HEIGH
 draw.text((BAR_X, BAR_Y + 10), "0:00", fill="white", font=artist_font)
 draw.text((BAR_X + BAR_WIDTH - 60, BAR_Y + 10), "--:--", fill="white", font=artist_font)
 
-# Controls (<< ▶ >>)
+# Controls (Shapes instead of unicode)
 CONTROLS_SIZE = 70
 CONTROLS_SPACING = 120
 CONTROLS_Y = BAR_Y + 60
-symbols = ["<<", "▶", ">>"]
-for i, symbol in enumerate(symbols):
-    cx = PANEL_X + (PANEL_W // 2) - CONTROLS_SIZE - CONTROLS_SPACING + i * (CONTROLS_SPACING)
-    cy = CONTROLS_Y
-    draw.ellipse([(cx, cy), (cx + CONTROLS_SIZE, cy + CONTROLS_SIZE)], fill="white")
-    draw.text((cx + CONTROLS_SIZE//2 - 15, cy + CONTROLS_SIZE//2 - 20),
-              symbol, fill="#222222", font=title_font)
+
+# Previous (triangle left)
+cx = PANEL_X + (PANEL_W // 2) - CONTROLS_SIZE - CONTROLS_SPACING
+cy = CONTROLS_Y
+draw.ellipse([(cx, cy), (cx + CONTROLS_SIZE, cy + CONTROLS_SIZE)], fill="white")
+draw.polygon([(cx+45, cy+20), (cx+25, cy+35), (cx+45, cy+50)], fill="#222222")
+
+# Play (triangle right)
+cx = PANEL_X + (PANEL_W // 2)
+cy = CONTROLS_Y
+draw.ellipse([(cx, cy), (cx + CONTROLS_SIZE, cy + CONTROLS_SIZE)], fill="white")
+draw.polygon([(cx+25, cy+20), (cx+25, cy+50), (cx+50, cy+35)], fill="#222222")
+
+# Next (triangle right)
+cx = PANEL_X + (PANEL_W // 2) + CONTROLS_SPACING
+cy = CONTROLS_Y
+draw.ellipse([(cx, cy), (cx + CONTROLS_SIZE, cy + CONTROLS_SIZE)], fill="white")
+draw.polygon([(cx+25, cy+20), (cx+25, cy+50), (cx+50, cy+35)], fill="#222222")
 
 # Save
 path = "/mnt/data/failed_apple.png"
